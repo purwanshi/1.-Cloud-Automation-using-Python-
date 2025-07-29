@@ -1,0 +1,25 @@
+import boto3
+
+session = boto3.Session(
+    aws_access_key_id='AKIAU***************',
+    aws_secret_access_key='*****************',
+    region_name='ap-south-1'
+)
+
+sts = session.client('sts')
+response = sts.get_caller_identity()
+print(response)
+
+# Connect to EC2
+ec2 = boto3.resource('ec2', region_name='ap-south-1')
+
+# Launch instance
+instances = ec2.create_instances(
+    ImageId='ami-0a0f1259dd1c90938',   # ✅ Valid Amazon Linux 2023 AMI for ap-south-1
+    MinCount=1,
+    MaxCount=1,
+    InstanceType='t2.micro',
+    KeyName='mykey123'                 # ✅ This key must exist in EC2 -> Key Pairs
+)
+
+print("Instance launched! ID:", instances[0].id)
